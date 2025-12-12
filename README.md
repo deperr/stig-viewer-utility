@@ -55,21 +55,27 @@ python stig_to_markdown.py --tui
 ```
 
 The TUI provides:
-- **File browser** for selecting STIG zip files
-- **Output directory** selection
+- **Auto-loading** from `./stigs/` directory on startup
+- **Multiple STIG support** - load and work with multiple STIGs at once
+- **Search popup** - press `/` to search across all loaded STIGs
 - **Severity filter** checkboxes (CAT I, CAT II, CAT III)
-- **Live preview** of STIG metadata before conversion
-- **Progress indication** during conversion
+- **Live preview** of combined STIG statistics
+- **Batch conversion** - convert all loaded STIGs at once
 
+**Main Screen:**
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  DISA STIG to Markdown Converter                                │
 ├─────────────────────────────────────────────────────────────────┤
-│  📁 File Selection                                              │
+│  📁 Loaded STIGs                                                │
 │  ┌────────────────────────────────────────────────────────────┐ │
-│  │ STIG Zip File: [U_RHEL_9_STIG.zip_______] [Browse]         │ │
-│  │ Output Dir:    [./output________________] [Browse]         │ │
+│  │   ✓ RHEL 9: Red Hat Enterprise Linux 9 STIG (447 rules)   │ │
+│  │   ✓ Win 2022: Windows Server 2022 STIG (312 rules)        │ │
+│  │                                                            │ │
+│  │   Total: 2 STIG(s), 759 rules                             │ │
 │  └────────────────────────────────────────────────────────────┘ │
+│  Add STIG: [________________________] [Browse] [Add]            │
+│  Output:   [./output_______________] [Browse]                   │
 │                                                                 │
 │  🎯 Severity Filter                                             │
 │  ┌────────────────────────────────────────────────────────────┐ │
@@ -78,20 +84,85 @@ The TUI provides:
 │                                                                 │
 │  📋 STIG Preview                                                │
 │  ┌────────────────────────────────────────────────────────────┐ │
-│  │ RHEL 9 Security Technical Implementation Guide             │ │
-│  │ Version: 2 | Release: 6 | Rules: 447                       │ │
-│  │ 🔴 CAT I: 20  🟠 CAT II: 411  🟡 CAT III: 16               │ │
+│  │ Loaded 2 STIG(s)                                           │ │
+│  │ Combined Rules by Severity:                                │ │
+│  │   🔴 CAT I (High):    45    🟠 CAT II (Medium): 623        │ │
+│  │   🟡 CAT III (Low):   91    Total: 759                     │ │
 │  └────────────────────────────────────────────────────────────┘ │
 │                                                                 │
-│           [ 🔄 Convert to Markdown ]    [ Quit ]                │
+│       [🔍 Search]  [🔄 Convert to Markdown]  [Quit]             │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+**Search Popup (press `/`):**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  🔍 Search STIGs                                                │
+├─────────────────────────────────────────────────────────────────┤
+│  [Search by STIG ID, title, description...______] [Clear]       │
+│                                                                 │
+│  Found 38 matches. Press Enter to view details.                 │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │ STIG     │ STIG ID    │ Severity │ Title                    ││
+│  │ RHEL 9   │ V-257984   │ 🔴 CAT I │ SSHD must not allow...   ││
+│  │ RHEL 9   │ V-258094   │ 🔴 CAT I │ Must not allow blank...  ││
+│  │ Win 2022 │ V-254269   │ 🟠 CAT II│ Must have password...    ││
+│  └─────────────────────────────────────────────────────────────┘│
+│                                                                 │
+│                         [Close]                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Help Popup (press `?`):**
+```
+┌──────────────────────────────────────────────────────┐
+│  ⌨️  Keyboard Shortcuts                              │
+├──────────────────────────────────────────────────────┤
+│  Navigation                                          │
+│    Tab          Navigate between elements            │
+│    Shift+Tab    Navigate backwards                   │
+│    Enter        Activate / Select                    │
+│    Space        Toggle checkboxes                    │
+│                                                      │
+│  Actions                                             │
+│    /            Open search                          │
+│    ?            Show this help                       │
+│    F1           Show this help                       │
+│                                                      │
+│  Quitting                                            │
+│    q            Quit application                     │
+│    Escape       Close popup / Quit                   │
+│    Ctrl+C       Quit application                     │
+│                                                      │
+│  In Search Modal                                     │
+│    Enter        View selected STIG details           │
+│    ↑ / ↓        Navigate results                     │
+│    Escape       Close search                         │
+└──────────────────────────────────────────────────────┘
+```
+
 **TUI Keyboard Shortcuts:**
-- `Tab` / `Shift+Tab` - Navigate between elements
-- `Space` - Toggle checkboxes
-- `Enter` - Activate buttons / Select files
-- `q` or `Ctrl+C` - Quit
+
+| Key | Action |
+|-----|--------|
+| `/` | Open search popup |
+| `?` or `F1` | Show help popup |
+| `Tab` / `Shift+Tab` | Navigate between elements |
+| `Space` | Toggle checkboxes |
+| `Enter` | Activate buttons / Select items |
+| `Escape` | Close popup / Quit application |
+| `q` | Quit application |
+| `Ctrl+C` | Quit application |
+
+**Auto-Loading STIGs:**
+
+Place STIG zip files in the `./stigs/` directory and they will be automatically loaded when the TUI starts:
+
+```bash
+mkdir -p stigs
+cp U_RHEL_9_STIG.zip U_Windows_2022_STIG.zip ./stigs/
+python stig_to_markdown.py --tui
+```
 
 ### CLI Mode (Basic Usage)
 
